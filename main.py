@@ -79,8 +79,11 @@ def send_ARP(_source, _destination, _count, _response, _gratuitous,
 
             packet_to_send = ether / arp
             try:
-                for interface in interfaces:
-                    sendp(packet_to_send, iface=interface, count=1, verbose=False)
+                if isinstance(interfaces, dict):
+                    for interface in interfaces:
+                        sendp(packet_to_send, iface=interface, count=1, verbose=0)
+                else:
+                    sendp(packet_to_send, iface=interfaces, count=1, verbose=0)
             except ValueError as e:
                 print(e)
         print(f"{_count} packets has been sent")
@@ -103,14 +106,19 @@ def send_ARP(_source, _destination, _count, _response, _gratuitous,
                   hwdst=get_mac(_target_ip))
         packet_to_send = ether / arp
         try:
-            for interface in interfaces:
-                sendp(packet_to_send, iface=interface, count=_count)
-            print(f"{_count} packets has been sent")
+            if isinstance(interfaces, dict):
+                for interface in interfaces:
+                    sendp(packet_to_send, iface=interface, count=_count, verbose=0)
+                print(f"{_count} packets has been sent")
+            else:
+                sendp(packet_to_send, iface=interfaces, count=_count, verbose=0)
+                print(f"{_count} packets has been sent")
         except ValueError as e:
             print(e)
 
 
 if __name__ == "__main__":
+
     parser = optparse.OptionParser()
     # parser.add_option('--res', '--response', action='store_true', dest='response',
     #                   help='flood response')
